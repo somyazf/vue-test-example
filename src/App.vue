@@ -1,21 +1,15 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <AddUser @add="addToUserList" />
-    <UserLists :users="allUser" />
+    <PdfGenerator />
   </div>
 </template>
 
 <script>
-import AddUser from './components/AddUser.vue'
-import UserLists from './components/UserLists.vue'
+import PdfGenerator from './components/PdfGenerator.vue'
 
 export default {
   name: 'App',
-  components: {
-    UserLists,
-    AddUser
-  },
+  components: { PdfGenerator },
   data() {
     return {
       allUser:[]
