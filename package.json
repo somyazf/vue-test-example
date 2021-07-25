@@ -1,0 +1,85 @@
+{
+  "name": "vue-test-ex",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --colors"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "core-js": "^3.6.5",
+    "downloadjs": "^1.4.7",
+    "html2canvas": "^1.1.4",
+    "jspdf": "^2.3.1",
+    "pdf-lib": "^1.16.0",
+    "pdfmake": "^0.2.0",
+    "regenerator-runtime": "^0.13.7",
+    "vue": "^2.6.12",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.2",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "^4.5.13",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/test-utils": "^1.0.0-beta.1",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0",
+    "file-loader": "^4.3.0",
+    "typescript": "~3.9.3",
+    "vue-jest": "^5.0.0-0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {},
+    "overrides": [
+      {
+        "files": [
+          "**/__test__/*.{j,t}s?(x)",
+          "**/test/unit/**/*.spec.{j,t}s?(x)",
+          "**/test/integration/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
+  }
+}
