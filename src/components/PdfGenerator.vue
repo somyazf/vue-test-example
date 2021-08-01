@@ -17,26 +17,24 @@
         <p>course description about course3</p>
       </div>
     </div>
-    <button @click="copyPages">merge WITH pdflib</button>
+    <button @click="copyPages">MERGE WITH PDFLIB</button>
     <!-- <button @click="generatePdfMake">GENERATE WITH PDFMAKE</button> -->
-    <button @click="generateJsPdf">GENERATE WITH JSPDF</button>
+    <button @click="generatePdf">GENERATE WITH JSPDF</button>
   </div>
 </template>
 <script>
 import { jsPDF } from "jspdf"
 import html2canvas from "html2canvas"
 import IRANSans from "../assets/IRANSans-normal"
-import pic1 from "../assets/images/pic1.jpeg"
-import pic2 from "../assets/images/pic2.jpeg"
-import pic3 from "../assets/images/pic3.jpeg"
-// eslint-disable-next-line no-unused-vars
+import image1 from "../assets/images/pic1.jpeg"
+import image2 from "../assets/images/pic2.jpeg"
+import image3 from "../assets/images/pic3.jpeg"
 import download from "downloadjs"
 // eslint-disable-next-line no-unused-vars
 import { ReadingDirection, PDFDocument, rgb, StandardFonts } from "pdf-lib"
 import pdfMake from "pdfmake/build/pdfmake"
 import pdfFonts from "pdfmake/build/vfs_fonts"
 pdfMake.vfs = pdfFonts.pdfMake.vfs
-// import generatedPdf from "../assets/docs/generatedpdf.pdf"
 export default {
     methods: {
         async asemble() {
@@ -96,36 +94,53 @@ export default {
             download(pdfBytes, "pdf-lib_pdf_page_embedding_example.pdf", "application/pdf");
 
         },
+        /**
+         * merge two pdfs
+         *
+         * Author: Somayeh Azizian
+         * last edit: 
+         * Inspector: 
+         */
         async copyPages() {
+            // Fetch PDF documents
             const url1 = 'https://api.carnotic.com/course/291/60f688b5a27c3.pdf'
-            const firstDonorPdfBytes = await fetch(url1).then(res => res.arrayBuffer())
+            const firstPdfBytes = await fetch(url1).then(res => res.arrayBuffer())
 
             const url2 = 'https://pdf-lib.js.org/assets/us_constitution.pdf'
-            const secondDonorPdfBytes = await fetch(url2).then(res => res.arrayBuffer())
+            const secondPdfBytes = await fetch(url2).then(res => res.arrayBuffer())
 
-            const firstDonorPdfDoc = await PDFDocument.load(firstDonorPdfBytes)
-            // eslint-disable-next-line no-undef
-            const secondDonorPdfDoc = secondDonorPdfBytes
+            // Load a PDFDocument from each of PDFs
+            const firstPdfDoc = await PDFDocument.load(firstPdfBytes)
+            const secondPdfDoc = await PDFDocument.load(secondPdfBytes)
 
+            // Create a new PDFDocument
             const pdfDoc = await PDFDocument.create();
 
-            const firstPdfPages = firstDonorPdfDoc.getPages()
-            const pdfIndexs = []
-            let pdfIndexsLetter = []
+            const firstPdfPages = firstPdfDoc.getPages()
+            const firstPdfIndexs = []
+            let firstPdfIndexLetter = []
+
             for (const key in firstPdfPages) {
-                pdfIndexs.push( Number(key))
-                pdfIndexsLetter.push('page' + Number(key))
-            }
-            const firstDonorPage = await pdfDoc.copyPages(firstDonorPdfDoc, pdfIndexs)
-            pdfIndexsLetter = firstDonorPage
-            for (let index = 0; index < pdfIndexsLetter.length; index++) {
-                pdfDoc.addPage(pdfIndexsLetter[index])
+                firstPdfIndexs.push(Number(key))
+                firstPdfIndexLetter.push('page' + Number(key))
             }
 
-            const [secondDonorPage] = await pdfDoc.copyPages(secondDonorPdfDoc, [0])
-            pdfDoc.addPage(secondDonorPage)
+            // Copy all pages of the first pdf document
+            const firstPdfCopiedPages = await pdfDoc.copyPages(firstPdfDoc, firstPdfIndexs)
+            firstPdfIndexLetter = firstPdfCopiedPages
+            for (let index = 0; index < firstPdfIndexLetter.length; index++) {
+                pdfDoc.addPage(firstPdfIndexLetter[index])
+            }
+
+            // Copy the first page of the second pdf document
+            const [secondPdfCopiedPages] = await pdfDoc.copyPages(secondPdfDoc, [0])
+            pdfDoc.addPage(secondPdfCopiedPages)
+
+            // Serialize the PDFDocument to bytes (a Uint8Array)
             const pdfBytes = await pdfDoc.save()
-            download(pdfBytes, "pdf-lib_page_copying.pdf", "application/pdf");
+
+            // Trigger the browser to download the PDF document
+            download(pdfBytes, "merged-pdfs.pdf", "application/pdf");
         },
         async modifyPdf(firstPdfDoc, pdfDoc) {
             const url2 = 'https://pdf-lib.js.org/assets/us_constitution.pdf'
@@ -147,18 +162,29 @@ export default {
             const pdfBytes = await firstPdfDoc.save()
             download(pdfBytes, "pdf-lib_page_mody.pdf", "application/pdf");   
         },
-        generateJsPdf() {
-            console.log('jd')
+        /**
+         * generate pdf
+         *
+         * Author: Somayeh Azizian
+         * last edit: 
+         * Inspector: 
+         */
+        generatePdf() {
             const doc = new jsPDF('l', 'pt', 'A4')
+            
+            // Load and set custom font
             IRANSans
             doc.setFont('IRANSans')
+
             doc.setDrawColor(142, 144, 145);
             doc.rect(10, 10, 820, 573);
+
             doc.setFontSize(20)
             doc.text("دوره های پیشنهادی" , 421 ,58, 'center')
-            doc.setFontSize(15)
-            doc.addImage(pic1, "JPEG", 30, 90, 240, 140)
+
             doc.setFontSize(11)
+            
+            doc.addImage(image1, "JPEG", 30, 90, 240, 140)
             doc.textWithLink("تحلیل تنش اعضای خرپای سه بعدی در نرم افزار آباکوس",
              30 + 220, 90 + 140 + 20, {
                 url: "https://parall.ax/",
@@ -166,7 +192,8 @@ export default {
                 maxWidth: 280,
                 lineHeightFactor: 2.1
             })
-            doc.addImage(pic2, "JPEG", 30 + 240 + 20, 90, 240, 140)
+
+            doc.addImage(image2, "JPEG", 30 + 240 + 20, 90, 240, 140)
             doc.textWithLink("تحلیل تنش مخازن کامپوزیتی تحت فشار داخلی در نرم افزار آباکوس",
              220 + 30 + 240 + 20, 90 + 140 + 20, {
                 url: "https://parall.ax/",
@@ -174,7 +201,8 @@ export default {
                 maxWidth: 280,
                 lineHeightFactor: 2.1
             })
-            doc.addImage(pic3, "JPEG", 30 + 240 + 240 + 40, 90, 240, 140)
+
+            doc.addImage(image3, "JPEG", 30 + 240 + 240 + 40, 90, 240, 140)
             doc.textWithLink("شبیه‌سازی فرآیند اتوفرتاژ و تنش پسماند در ماده سخت‌شونده در نرم افزار آباکوس",
              220 + 30 + 240 + 240 + 40, 90 + 140 + 20, {
                 url: "https://parall.ax/",
@@ -182,7 +210,8 @@ export default {
                 maxWidth: 280,
                 lineHeightFactor: 2.1
             })
-            doc.save('generated' + new Date().getTime() + '.pdf')
+
+            doc.save('generated' + new Date().getTime() + 'pdf' + '.pdf')
         },
         generatePdfMake() {
             const docDefinition = {
